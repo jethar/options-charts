@@ -33,11 +33,11 @@ def get_instruments():
     with open(INSTRUMENT_CSV, newline='') as f:
         reader = csv.DictReader(f)
     #     header = next(reader)  # ignore header
-        data_nifty = [int(row['instrument_token']) for row in reader if "NIFTY" in row['tradingsymbol']]
+        data_nifty = [int(row['instrument_token']) for row in reader if ("NIFTY" in row['tradingsymbol']) or ("ETF" in row['tradingsymbol'])]
 
     with open(INSTRUMENT_CSV, newline='') as f:
         reader = csv.DictReader(f)       
-        data_oth = [int(row['instrument_token']) for row in reader if row['tradingsymbol'].find("NIFTY") == -1]
+        data_oth = [int(row['instrument_token']) for row in reader if ("NIFTY" not in row['tradingsymbol']) and ("ETF" not in row['tradingsymbol'])]
 
     return data_nifty, data_oth  
 
