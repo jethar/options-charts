@@ -73,8 +73,10 @@ def get_IST_time():
 # Task to insert to SQLite db
 def insert_ticks(ticks):
     c = db.cursor()
-    qry = "insert into ticks_fullmode (tick_date, token, price, tick_json) values "
+    qry = "insert into ticks_fullmode (tick_date, token, price) values "
+    qry_full = "insert into ticks_fullmode (tick_date, token, price, tick_json) values "
     count = 0
+    count_full = 0
     time = get_IST_time()
 
     for tick in ticks:
@@ -83,12 +85,22 @@ def insert_ticks(ticks):
         #     "date": datetime.now(),
         #     "token": tick["instrument_token"],
         #     "price": tick["last_price"]})
-        if count > 0:
-            qry += ", "
-        qry += f"('{time}', {tick['instrument_token']}, {tick['last_price']}, json('{json.dumps(tick, default=str)}'))"
-        count += 1
 
-    c.execute(qry)
+        if tick['mode'] == "full":
+            if count_full > 0:
+                qry_full += ", "
+            qry_full += f"('{time}', {tick['instrument_token']}, {tick['last_price']}, json('{json.dumps(tick, default=str)}'))"
+            count_full += 1
+        else:
+            if count > 0:
+                qry += ", "
+            qry += f"('{time}', {tick['instrument_token']}, {tick['last_price']})"
+            count += 1
+
+    if count:
+        c.execute(qry)
+    if count_full:
+        c.execute(qry_full)    
     # logging.debug("Inserting ticks to db : {}".format(json.dumps(ticks)))
     logging.debug(f"Inserting ticks to db {time}.")
 
