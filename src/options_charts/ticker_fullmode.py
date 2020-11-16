@@ -70,6 +70,23 @@ def get_time_in_timezone(timezone):
 def get_IST_time():
     return get_time_in_timezone(india_tz)
 
+def delete_keys(tick, keys):
+    """
+    Delete keys from tick dict. 
+    Use "dot" notaion for representing nested keys. e.g. ohlc.close
+    """
+    
+    for key in keys:
+        t = tick
+        *key_prefix, last_part = key.split('.')
+        for k in key_prefix:
+            t = t[k]
+ 
+        try:
+            del t[last_part]
+        except KeyError:
+            logging.debug(f'Key {key}" is not in the tick dictionary')   
+
 # Task to insert to SQLite db
 def insert_ticks(ticks):
     c = db.cursor()
@@ -89,6 +106,9 @@ def insert_ticks(ticks):
         if tick['mode'] == "full":
             if count_full > 0:
                 qry_full += ", "
+            
+            delete_keys(tick, ["depth", "oi_day_high", "oi_day_low", "buy_quantity", "sell_quantity", "ohlc.open", "ohlc.close"])
+
             qry_full += f"('{time}', {tick['instrument_token']}, {tick['last_price']}, json('{json.dumps(tick, default=str)}'))"
             count_full += 1
         else:
