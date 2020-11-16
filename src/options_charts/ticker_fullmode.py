@@ -18,7 +18,7 @@ INSTRUMENT_CSV = os.getenv('INSTRUMENT_CSV')
 
 
 CREATE_TICK_TABLE_SCRIPT = f"""
-    CREATE TABLE IF NOT EXISTS ticks_fullmode ( 
+    CREATE TABLE IF NOT EXISTS ticks ( 
         tick_date	DATETIME, 
         token	INTEGER, 
         price	REAL,
@@ -90,8 +90,8 @@ def delete_keys(tick, keys):
 # Task to insert to SQLite db
 def insert_ticks(ticks):
     c = db.cursor()
-    qry = "insert into ticks_fullmode (tick_date, token, price) values "
-    qry_full = "insert into ticks_fullmode (tick_date, token, price, tick_json) values "
+    qry = "insert into ticks (tick_date, token, price) values "
+    qry_full = "insert into ticks (tick_date, token, price, tick_json) values "
     count = 0
     count_full = 0
     time = get_IST_time()
