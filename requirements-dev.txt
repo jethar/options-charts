@@ -1,0 +1,8 @@
+jupyterlab 
+requests
+python-dotenv
+pylint
+#celery
+kiteconnect
+sqlite-utils
+#redis
